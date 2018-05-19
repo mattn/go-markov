@@ -28,7 +28,7 @@ func (m *Markov) Update(text string) {
 
 	words := []string{}
 	for _, token := range tokens {
-		if token.Surface == "EOS" {
+		if token.Surface == "BOS" || token.Surface == "EOS" {
 			continue
 		}
 		words = append(words, token.Surface)
@@ -36,6 +36,14 @@ func (m *Markov) Update(text string) {
 
 	size := len(words)
 
+	if size == 1 {
+		second, ok := m.tbl[words[0]]
+		if !ok {
+			second = make(map[string][]string)
+			m.tbl[words[0]] = second
+		}
+		return
+	}
 	for i := 0; i < size-2; i++ {
 		second, ok := m.tbl[words[i]]
 		if !ok {
@@ -51,6 +59,9 @@ func (m *Markov) First() string {
 	for k := range m.tbl {
 		keys = append(keys, k)
 	}
+	if len(keys) == 0 {
+		return ""
+	}
 	return keys[rand.Int()%len(keys)]
 }
 
@@ -60,6 +71,9 @@ func (m *Markov) Chain(first string) string {
 	keys := []string{}
 	for k := range m.tbl[first] {
 		keys = append(keys, k)
+	}
+	if len(keys) == 0 {
+		return ""
 	}
 	kv := rand.Int() % len(keys)
 	second := keys[kv]
