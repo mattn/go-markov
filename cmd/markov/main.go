@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"log"
 	"math/rand"
@@ -13,6 +14,10 @@ import (
 )
 
 func main() {
+	var length int
+	flag.IntVar(&length, "n", -1, "letters")
+	flag.Parse()
+
 	rand.Seed(time.Now().UnixNano())
 
 	m := markov.New()
@@ -23,5 +28,13 @@ func main() {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(m.Chain(m.First()))
+
+	var result string
+	for {
+		result = strings.TrimSpace(m.Chain(m.First()))
+		if result != "" && (length == -1 || len([]rune(result)) <= length) {
+			break
+		}
+	}
+	fmt.Println(result)
 }
