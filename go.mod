@@ -1,6 +1,6 @@
 module github.com/mattn/go-markov
 
-go 1.12
+go 1.18
 
 require (
 	github.com/ikawaha/kagome-dict/uni v1.1.9
