@@ -93,6 +93,7 @@ func (m *Markov) Chain(first string) string {
 	second := keys[kv]
 	text += second
 
+	limit := 500
 	for second != "" {
 		size := len(m.tbl[first][second])
 		if size == 0 {
@@ -103,6 +104,10 @@ func (m *Markov) Chain(first string) string {
 		text += next
 		first = second
 		second = next
+
+		if limit--; limit < 0 {
+			return ""
+		}
 	}
 	return text
 }
